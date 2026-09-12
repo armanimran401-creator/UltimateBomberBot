@@ -9,7 +9,7 @@ import signal
 import sys
 from datetime import datetime
 from aiogram import Bot, Dispatcher, types, F
-from aiogram.filters import CommandStart, Command
+from aiogram.filters import Command
 from aiogram.client.default import DefaultBotProperties
 from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
 from aiogram.fsm.context import FSMContext
@@ -104,7 +104,7 @@ class AdminState(StatesGroup):
     waiting_for_unban = State()
 
 
-# --- COMPLETE API COLLECTION (MERGED FROM BOTH FILES) ---
+# --- COMPLETE API COLLECTION ---
 ULTIMATE_APIS = [
     # === CALL APIs ===
     {
@@ -785,7 +785,7 @@ def create_quick_attack_keyboard():
 
 
 # --- HANDLERS ---
-@dp.message(CommandStart())
+@dp.message(Command("start"))
 async def cmd_start(message: types.Message):
     user_id = message.from_user.id
 
@@ -1767,14 +1767,10 @@ async def handle_ping(request):
     return web.Response(text="Bot is ALIVE!")
 
 
-async def handle_ping_head(request):
-    return web.Response(text="")
-
-
 async def start_web_server():
     app = web.Application()
+    # register GET only (aiohttp automatically handles HEAD for GET routes)
     app.router.add_get("/", handle_ping)
-    app.router.add_head("/", handle_ping_head)
     app.router.add_get("/health", handle_ping)
 
     runner = web.AppRunner(app)
